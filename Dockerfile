@@ -1,20 +1,26 @@
-@@ -0,0 +1,19 @@
-FROM node:18-alpine
+FROM scratch
 
-ENV NODE_ENV=production
-ARG NPM_BUILD="npm install --omit=dev"
-EXPOSE 8080/tcp
+# Metadata params
+ARG BUILD_DATE
+ARG VERSION
+ARG PROJECT_URL
+ARG VCS_REF
+ARG TARBALL
+ARG RELEASE_DESCRIPTION
 
-LABEL maintainer="TitaniumNetwork Ultraviolet Team"
-LABEL summary="Ultraviolet Proxy Image"
-LABEL description="Example application of Ultraviolet which can be deployed in production."
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+LABEL org.opencontainers.image.created="$BUILD_DATE" \
+      org.opencontainers.image.source="$PROJECT_URL" \
+      org.opencontainers.image.revision="$VCS_REF" \
+      org.opencontainers.image.vendor="OffSec" \
+      org.opencontainers.image.version="$VERSION" \
+      org.opencontainers.image.title="Kali Linux ($RELEASE_DESCRIPTION branch)" \
+      org.opencontainers.image.description="Official Kali Linux container image for $RELEASE_DESCRIPTION" \
+      org.opencontainers.image.url="https://www.kali.org/" \
+      org.opencontainers.image.authors="Kali Developers <devel@kali.org>"
 
-WORKDIR /app
+ADD $TARBALL /
 
-COPY ["package.json", "package-lock.json", "./"]
-RUN $NPM_BUILD
+ENV LANG=C.UTF-8
 
-COPY . .
-
-ENTRYPOINT [ "node" ]
-CMD ["src/index.js"]
+CMD ["bash"]
